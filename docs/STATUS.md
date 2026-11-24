@@ -9,4 +9,4 @@ Done: full shop — home (hero with video, novelties rail, categories, fabric/co
 4. Delivery/payment options (НП, адресна, самовивіз; при отриманні / передоплата) and whether made-to-order needs a deposit.
 5. Where should orders go — Telegram bot (need token + chat id), e-mail or CRM.
 6. Professional photos/video of the showroom would lift the site a lot (current images are phone frames from reels).
-7. Domain, hosting (Vercel?), GitHub repo — not created yet.
+7. Domain + Vercel — GitHub repo plvn-code/olberg is public; Vercel deploy requested from @hlopenspo.
