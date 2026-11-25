@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useState } from "react";
-import { bySlug, uah } from "@/lib/catalog";
+import { bySlug, priceText, unitPrice, uah } from "@/lib/catalog";
 import { site, stores } from "@/lib/site";
 import { Qty } from "./Chrome";
 import { Icon } from "./Icons";
@@ -11,7 +11,7 @@ import { useStore } from "./Store";
 type Delivery = "np" | "courier" | "pickup";
 
 export function Checkout() {
-  const { lines, total, setQty, remove, clear } = useStore();
+  const { lines, total, onRequest, setQty, remove, clear } = useStore();
   const [delivery, setDelivery] = useState<Delivery>("np");
   const [pay, setPay] = useState("cod");
   const [busy, setBusy] = useState(false);
@@ -69,7 +69,7 @@ export function Checkout() {
       comment: String(f.get("comment") || "").trim(),
       delivery,
       pay,
-      lines: lines.map((l) => ({ slug: l.slug, name: bySlug(l.slug)?.name, qty: l.qty, fabric: l.fabric, color: l.color, price: bySlug(l.slug)?.price })),
+      lines: lines.map((l) => ({ slug: l.slug, name: bySlug(l.slug)?.name, qty: l.qty, size: l.size, fabric: l.fabric })),
       total,
     };
     try {
@@ -109,7 +109,7 @@ export function Checkout() {
             {(
               [
                 ["np", "Нова пошта", "У відділення або поштомат"],
-                ["courier", "Адресна доставка", "До дверей, по всій Україні"],
+                ["courier", "Доставка за адресою", "До дверей, окрім окупованих територій"],
                 ["pickup", "Самовивіз", "З магазину OLBERG"],
               ] as const
             ).map(([id, t, d]) => (
@@ -169,7 +169,7 @@ export function Checkout() {
           </p>
         )}
         <button className="btn btn-dark btn-block btn-lg" disabled={busy}>
-          {busy ? "Надсилаємо…" : `Підтвердити замовлення · ${uah(total)}`}
+          {busy ? "Надсилаємо…" : total ? `Підтвердити замовлення · від ${uah(total)}` : "Підтвердити замовлення"}
         </button>
         <p className="muted small">Натискаючи кнопку, ви погоджуєтеся на обробку персональних даних для виконання замовлення.</p>
       </form>
@@ -184,10 +184,10 @@ export function Checkout() {
                 <img src={p.imgs[0]} alt="" width={80} height={100} />
                 <div>
                   <Link href={`/product/${p.slug}`}>{p.name}</Link>
-                  {(l.fabric || l.color) && <p className="muted small">{[l.fabric, l.color].filter(Boolean).join(" · ")}</p>}
+                  {(l.size || l.fabric) && <p className="muted small">{[l.size, l.fabric && `Тканина: ${l.fabric}`].filter(Boolean).join(" · ")}</p>}
                   <div className="drawer-row">
                     <Qty value={l.qty} onChange={(q) => setQty(l.key, q)} small />
-                    <b>{uah(p.price * l.qty)}</b>
+                    <b>{priceText((unitPrice(p, l.size) || 0) * l.qty)}</b>
                   </div>
                   <button className="link-btn" type="button" onClick={() => remove(l.key)}>
                     Видалити
@@ -200,7 +200,7 @@ export function Checkout() {
         <div className="co-total">
           <div>
             <span>Товари</span>
-            <span>{uah(total)}</span>
+            <span>{total ? uah(total) : "—"}</span>
           </div>
           <div>
             <span>Доставка</span>
@@ -208,8 +208,9 @@ export function Checkout() {
           </div>
           <div className="co-sum-total">
             <span>Разом</span>
-            <b>{uah(total)}</b>
+            <b>{total ? `від ${uah(total)}` : "за запитом"}</b>
           </div>
+          {onRequest && <p className="muted small">Ціну позицій «за запитом» менеджер назве під час підтвердження замовлення.</p>}
         </div>
       </aside>
     </div>

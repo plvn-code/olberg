@@ -315,7 +315,7 @@ p {
 .topbar-msg {
   position: relative;
   height: 20px;
-  min-width: 340px;
+  min-width: 480px;
   text-align: center;
   overflow: hidden;
 }
@@ -337,7 +337,10 @@ p {
   justify-self: end;
   display: inline-flex;
   align-items: center;
-  gap: 6px;
+  gap: 14px;
+}
+.topbar-r a:hover {
+  text-decoration: underline;
 }
 .hdr {
   position: sticky;
@@ -391,13 +394,13 @@ p {
 .logo {
   font-family: var(--sans);
   font-weight: 600;
-  font-size: 30px;
-  letter-spacing: 0.06em;
+  font-size: 42px;
+  letter-spacing: 0.07em;
   line-height: 1;
   justify-self: center;
 }
 .logo-lg {
-  font-size: 38px;
+  font-size: 52px;
 }
 .hdr-right {
   justify-self: end;
@@ -1672,14 +1675,16 @@ p {
 .cat-hero-imgs {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 6px;
-  height: 100%;
-  min-height: 380px;
+  gap: 10px;
+  align-self: center;
+  padding: 28px max(var(--pad), calc((100vw - var(--wrap)) / 2 + var(--pad))) 28px 0;
 }
 .cat-hero-imgs img {
   width: 100%;
-  height: 100%;
-  object-fit: cover;
+  height: auto;
+  aspect-ratio: 4 / 5;
+  object-fit: contain;
+  background: #fff;
 }
 .cat-bar {
   display: flex;
@@ -2389,6 +2394,7 @@ p {
   }
   .topbar-msg {
     min-width: 0;
+    font-size: 12px;
   }
   .usp-in {
     grid-template-columns: repeat(2, 1fr);
@@ -2447,11 +2453,7 @@ p {
     padding: 40px var(--pad) 32px;
   }
   .cat-hero-imgs {
-    min-height: 0;
-    height: auto;
-  }
-  .cat-hero-imgs img {
-    aspect-ratio: 4 / 5;
+    padding: 0 var(--pad) 28px;
   }
   .pv,
   .co,
@@ -2642,4 +2644,102 @@ p {
   .classic-item h3 {
     font-size: 21px;
   }
+}
+
+/* ——— 2026-11-25: contacts, sizes, fabric wish, price on request */
+.mnav-phones {
+  display: grid;
+  gap: 10px;
+  margin-top: 28px;
+  font-weight: 500;
+}
+.mnav-phones small,
+.ftr-phone small {
+  font-weight: 400;
+  color: var(--muted);
+  margin-left: 6px;
+}
+.card-price.ask {
+  font-weight: 400;
+  color: var(--ink-2);
+}
+.pv-ask {
+  font-size: 0.8em;
+}
+.pv-contact {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 16px;
+  margin-top: 12px;
+  font-size: 13.5px;
+  color: var(--ink-2);
+}
+.pv-contact a {
+  color: var(--ink);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.pv-contact a:hover {
+  color: var(--plum);
+}
+.sizes {
+  margin-top: 28px;
+  padding-top: 24px;
+  border-top: 1px solid var(--line);
+}
+.sizes .chip small {
+  color: inherit;
+  opacity: 0.75;
+}
+.picker-title {
+  font: 400 22px/1.2 var(--display);
+  text-transform: uppercase;
+}
+.picker-field {
+  display: grid;
+  gap: 6px;
+  font-size: 13px;
+  color: var(--ink-2);
+}
+.picker-field input {
+  border: 1px solid var(--line);
+  padding: 12px 14px;
+  font-size: 15px;
+  outline: none;
+  border-radius: 0;
+  transition: border-color 0.2s;
+}
+.picker-field input:focus {
+  border-color: var(--ink);
+}
+.picker-note {
+  font-size: 12.5px;
+  color: var(--muted);
+  margin-top: 8px;
+}
+.store-contacts {
+  display: grid;
+  gap: 4px;
+  font-size: 14px;
+}
+.store-contacts a {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+@media (max-width: 1024px) {
+  .logo {
+    font-size: 30px;
+  }
+}
+
+/* whole product visible: landscape photos are letterboxed instead of cropped */
+.card-imgs img,
+.pv-main img,
+.pv-thumbs img {
+  object-fit: contain;
+}
+.card-media,
+.pv-main,
+.pv-thumbs button {
+  background: var(--cream);
 }

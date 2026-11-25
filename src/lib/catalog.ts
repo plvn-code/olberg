@@ -53,21 +53,28 @@ export const categories: Category[] = [
   },
 ];
 
+export type Size = { label: string; price?: number };
+
 export type Product = {
   slug: string;
   name: string;
   cat: CatId;
-  price: number;
+  /** "від" price in UAH; undefined → «Ціна за запитом» */
+  price?: number;
+  /** size variants — the price grows with the size */
+  sizes?: Size[];
+  /** Instagram post code the photos come from */
+  ig?: string;
   old?: number;
   tag?: "Новинка" | "Хіт" | "Знижка";
-  imgs: [string, string];
+  imgs: string[];
   short: string;
   desc: string;
   specs: [string, string][];
   fabric?: boolean; // available in fabric/colour of choice
 };
 
-const i = (n: string): [string, string] => [`/img/p/${n}-1.webp`, `/img/p/${n}-2.webp`];
+const i = (n: string, k = 2): string[] => Array.from({ length: k }, (_, j) => `/img/p/${n}-${j + 1}.webp`);
 
 export const products: Product[] = [
   // ——— Дивани
@@ -77,7 +84,8 @@ export const products: Product[] = [
     cat: "dyvany",
     price: 38900,
     tag: "Хіт",
-    imgs: i("amanto"),
+    ig: "DMu5KNDo_TP",
+    imgs: ["/img/p/amanto-w1.webp", "/img/p/amanto-w2.webp", "/img/p/amanto-n1.webp", "/img/p/amanto-w3.webp"],
     short: "Велюр антикіготь · 270 × 185 см",
     desc: "Великий кутовий диван зі стьобаною спинкою та декоративними кільцями на підлокітниках. Розкладається у просторе спальне місце, тканина — велюр антикіготь.",
     specs: [
@@ -177,11 +185,11 @@ export const products: Product[] = [
     fabric: true,
   },
   {
-    slug: "dyvan-hrafit",
+    slug: "dyvan-bonn",
     name: "Диван «Бонн»",
     cat: "dyvany",
     price: 19460,
-    imgs: i("grey-sofa"),
+    imgs: i("bonn", 3),
     short: "UNITEX Rock · ніша для білизни",
     desc: "Сучасний прямий диван для відпочинку та сну: просторий, м'який, з нішею для білизни. На фото — тканина UNITEX Rock 04.",
     specs: [
@@ -373,7 +381,7 @@ export const products: Product[] = [
     name: "Стілець «Франческа»",
     cat: "stiltsi",
     price: 5600,
-    imgs: i("francheska"),
+    imgs: i("francheska", 4),
     short: "Горіх з патиною та тасьмою",
     desc: "Обідній стілець у класичному стилі з бука. Колір горіх з патиною, оздоблення тасьмою.",
     specs: [
@@ -388,7 +396,7 @@ export const products: Product[] = [
     name: "Стілець «Палермо»",
     cat: "stiltsi",
     price: 6750,
-    imgs: i("palermo"),
+    imgs: i("palermo", 3),
     short: "Масив буку · будь-який колір",
     desc: "Обідній стілець з масиву буку з круглою спинкою. Виготовляємо в будь-якому кольорі каркаса та будь-якій тканині.",
     specs: [
@@ -403,7 +411,7 @@ export const products: Product[] = [
     name: "Стілець «Зігмунд»",
     cat: "stiltsi",
     price: 4500,
-    imgs: i("zigmund"),
+    imgs: i("zigmund", 4),
     short: "Гнутий шпон горіха",
     desc: "Стілець-крісло зі спинкою з гнутого шпону та м'якою оббивкою. Ніжки з натурального дерева.",
     specs: [
@@ -579,7 +587,7 @@ export const products: Product[] = [
   },
   {
     slug: "stil-dub-ryflenyi",
-    name: "Стіл «Фенікс»",
+    name: "Круглий стіл з масиву",
     cat: "stoly",
     price: 19600,
     tag: "Хіт",
@@ -645,7 +653,7 @@ export const products: Product[] = [
   },
   {
     slug: "stil-ovalnyi-ryflenyi",
-    name: "Стіл «Відень»",
+    name: "Овальний стіл на рифленій основі",
     cat: "stoly",
     price: 24900,
     imgs: i("oval-oak"),
@@ -684,6 +692,7 @@ export const products: Product[] = [
       ["Розміри", "140 × 200, 160 × 200, 180 × 200"],
       ["Підйомний механізм", "Опційно"],
     ],
+    sizes: [{ label: "140 × 200", price: 23900 }, { label: "160 × 200", price: 25900 }, { label: "180 × 200", price: 27900 }],
     fabric: true,
   },
   {
@@ -699,6 +708,7 @@ export const products: Product[] = [
       ["Ніша для білизни", "Так"],
       ["Основа", "Дерев'яні ламелі"],
     ],
+    sizes: [{ label: "140 × 200", price: 21500 }, { label: "160 × 200", price: 23500 }, { label: "180 × 200", price: 25500 }],
     fabric: true,
   },
 
@@ -709,7 +719,7 @@ export const products: Product[] = [
     cat: "pufy",
     price: 3200,
     tag: "Хіт",
-    imgs: i("pouf5"),
+    imgs: i("pouf5", 3),
     short: "Пуф + 4 табурети всередині",
     desc: "Один пуф розкладається на п'ять місць для сидіння. Виготовимо в кольорі вашого дивану. Ніжки табуретів — чорні, білі або сірі.",
     specs: [
@@ -792,11 +802,63 @@ export const products: Product[] = [
     ],
     fabric: true,
   },
+
+  // ——— Додано 2026-11-25 з Instagram @mebli.olberg (ціни — за запитом)
+  { slug: "kutovyi-dyvan-milan", name: "Кутовий диван «Мілан»", cat: "dyvany", tag: "Новинка", ig: "DTf_8hTiJoN", imgs: i("milan", 3), short: "Сучасні лінії · дерев'яна вставка", desc: "Кутовий диван «Мілан» — стримана елегантність, сучасні лінії та відчуття простору. Комфорт, стиль і характер для вітальні.", specs: [["Тип", "Кутовий"]], fabric: true },
+  { slug: "dyvan-eliot", name: "Диван «Еліот»", cat: "dyvany", ig: "DTnvx6KiGoA", imgs: i("eliot", 3), short: "Дерев'яні підлокітники", desc: "Диван «Еліот» — сучасний мінімалізм, м'яка текстура, зручні подушки та дерев'яні підлокітники.", specs: [["Підлокітники", "Дерев'яні"]], fabric: true },
+  { slug: "dyvan-kansas", name: "Диван «Kansas»", cat: "dyvany", ig: "DU5nte4CAwE", imgs: i("kansas", 3), short: "Розкладний · ніша для білизни", desc: "Диван Kansas — сучасний дизайн і комфорт для щоденного відпочинку. Легко впишеться в будь-який інтер'єр.", specs: [["Розкладання", "Так"], ["Ніша для білизни", "Так"]], fabric: true },
+  { slug: "kutovyi-dyvan-chicago", name: "Кутовий диван «Chicago»", cat: "dyvany", ig: "DVOyjssiOCY", imgs: i("chicago", 3), short: "Глибоке сидіння · кутовий модуль", desc: "Кутовий диван «CHICAGO» — стильний, сучасний і зручний. Глибоке сидіння, м'які подушки та практичний кутовий модуль.", specs: [["Тип", "Кутовий"], ["Ніша для білизни", "Так"]], fabric: true },
+  { slug: "dyvan-olivia", name: "Диван «Олівія»", cat: "dyvany", ig: "DT2ek0-iMvj", imgs: i("olivia-sofa", 3), short: "Двомісний · білий різьблений каркас", desc: "«Олівія» — елегантний двомісний диван у класичному стилі. Білий різьблений каркас і м'які бежеві подушки.", specs: [["Місць", "2"], ["Каркас", "Різьблений, білий"]], fabric: true },
+  { slug: "miaka-chastyna-diamant", name: "М'яка частина «Діамант»", cat: "dyvany", ig: "DT_HwPcCHvq", imgs: i("diamant", 3), short: "Диван + крісла · глибока посадка", desc: "«Діамант» — м'яка частина з характером: вишукані форми, глибока посадка, максимальний комфорт і преміальний вигляд.", specs: [["Комплект", "Диван та крісла"]], fabric: true },
+  { slug: "dyvan-silver", name: "Диван «Silver»", cat: "dyvany", ig: "DVLae-biGA3", imgs: i("silver", 3), short: "Розкладний · декоративні цвяхи", desc: "Прямий розкладний диван з декоративними меблевими цвяхами та м'якими подушками.", specs: [["Розкладання", "Так"]], fabric: true },
+  { slug: "kutovyi-dyvan-white", name: "Кутовий диван «White»", cat: "dyvany", ig: "DWi0WgiiHlN", imgs: i("white", 3), short: "Букле · м'які подушки", desc: "Кутовий диван у фактурній тканині з об'ємними подушками на спинці.", specs: [["Тип", "Кутовий"]], fabric: true },
+  { slug: "kushetka-couch", name: "Кушетка «Couch» з пуфом", cat: "dyvany", ig: "DVbJCpsCGJZ", imgs: i("couch", 2), short: "Плавні форми · пуф у комплекті", desc: "Кушетка з плавними округлими формами та пуф у комплекті.", specs: [["Комплект", "Кушетка + пуф"]], fabric: true },
+  { slug: "kutovyi-rozkladnyi-dyvan", name: "Кутовий розкладний диван", cat: "dyvany", ig: "DMfb5ldocMK", imgs: i("corner", 2), short: "Механізм розкладання · полиця", desc: "Сучасний розкладний кутовий диван із потужним функціоналом: механізм розкладання, ніша та дерев'яна полиця.", specs: [["Тип", "Кутовий, розкладний"]], fabric: true },
+  { slug: "dyvan-na-zamovlennia", name: "Диван на замовлення", cat: "dyvany", ig: "DZsGbXzgWnK", imgs: i("custom-sofa", 2), short: "Під ваші розміри та тканину", desc: "Диван, виготовлений на індивідуальне замовлення: світлий відтінок, м'які подушки, розміри під ваш простір.", specs: [["Розмір", "Під замовлення"]], fabric: true },
+
+  { slug: "krislo-amanda", name: "Крісло «Аманда»", cat: "krisla", tag: "Новинка", ig: "DWPLVX9iJDi", imgs: i("amanda", 3), short: "Округла форма · дерев'яні ніжки", desc: "Стильне м'яке крісло «Аманда» з округлою формою, в тканині Lama 1 від Unitex та дерев'яними ніжками.", specs: [["Тканина на фото", "UNITEX Lama 1"], ["Ніжки", "Дерево"]], fabric: true },
+  { slug: "krislo-bela", name: "Крісло «Бела»", cat: "krisla", ig: "DTlNO_xCHXa", imgs: i("bela", 3), short: "Глибока посадка", desc: "Крісло «Бела» — елегантна форма, м'яка посадка та глибокий комфорт.", specs: [["Ніжки", "Метал, чорні"]], fabric: true },
+  { slug: "krislo-hnute-derevo", name: "Крісло з гнутого дерева", cat: "krisla", ig: "DMFibJIAXYQ", imgs: i("bent", 2), short: "Гнуте дерево · оксамит", desc: "Крісло зі спинкою з гнутого дерева та м'якою оксамитовою оббивкою: ергономічна форма та підлокітники.", specs: [["Каркас", "Гнуте дерево"]], fabric: true },
+  { slug: "krislo-biriuza", name: "Крісло на металевих ніжках", cat: "krisla", ig: "DO-6VMyjuBJ", imgs: i("teal", 2), short: "Лаконічна форма", desc: "Ексклюзивне крісло лаконічної форми на тонких металевих ніжках з латунними наконечниками.", specs: [["Ніжки", "Метал, латунні наконечники"]], fabric: true },
+
+  { slug: "stilets-vertu", name: "Стілець «Верту»", cat: "stiltsi", tag: "Новинка", ig: "DTbCWR5CC1p", imgs: i("vertu", 3), short: "Натуральне дерево · м'яка оббивка", desc: "Стілець «Верту» — поєднання елегантності та комфорту. Натуральне дерево, м'яка оббивка й продумана форма. Власне виробництво.", specs: [["Каркас", "Натуральне дерево"]], fabric: true },
+  { slug: "stilets-dallas", name: "Стілець «Даллас»", cat: "stiltsi", ig: "DV_PAVtiNbq", imgs: i("dallas", 2), short: "Букові ніжки", desc: "М'який стілець «Даллас» на чорних букових ніжках, під замовлення.", specs: [["Ніжки", "Бук, чорні"]], fabric: true },
+  { slug: "stilets-oliviia", name: "Стілець «Олівія»", cat: "stiltsi", ig: "DUp3tVzCHVT", imgs: i("olivia-chair", 2), short: "Овальна спинка · білий каркас", desc: "Стілець «Олівія» з овальною спинкою та білим вигнутим каркасом.", specs: [["Каркас", "Білий"]], fabric: true },
+  { slug: "stilets-henuia-k", name: "Стілець «Генуя К»", cat: "stiltsi", ig: "DVbMNQaCDoa", imgs: i("genua-k", 2), short: "Каретна стяжка · цвяхи", desc: "Класичний стілець «Генуя К» з круглою спинкою, каретною стяжкою та декоративними цвяхами.", specs: [["Каркас", "Дерево, горіх"]], fabric: true },
+  { slug: "stilets-bruno", name: "Стілець «Бруно» з підлокітником", cat: "stiltsi", ig: "DXyeAWIoLn6", imgs: i("bruno", 2), short: "Колір горіх · бронзові ґудзики", desc: "Стілець «Бруно з підлокітником» у кольорі горіх з бронзовими ґудзиками.", specs: [["Колір", "Горіх"]], fabric: true },
+  { slug: "stilets-daming-8042", name: "Стілець Daming 8042 (D)", cat: "stiltsi", ig: "DXKUaeYiJXX", imgs: i("daming", 2), short: "Масив гевеї · в наявності", desc: "Класичний стілець Daming 8042 (D) з різьбленням. Натуральне дерево — міцний масив гевеї.", specs: [["Матеріал", "Масив гевеї"], ["Наявність", "В наявності"]] },
+  { slug: "stilets-zhan", name: "Стілець «Zhan»", cat: "stiltsi", ig: "DUsMUf2iBrJ", imgs: i("zhan", 2), short: "Висока спинка · стяжка", desc: "Стілець з високою спинкою та каретною стяжкою на білих ніжках.", specs: [["Ніжки", "Білі"]], fabric: true },
+  { slug: "stilets-grey-201", name: "Стілець Grey-201", cat: "stiltsi", ig: "DVGNw4kCDo2", imgs: i("grey201", 2), short: "Екошкіра", desc: "Сучасний стілець в екошкірі з широкою спинкою.", specs: [["Оббивка", "Екошкіра"]] },
+  { slug: "stilets-a-107", name: "Стілець A-107", cat: "stiltsi", ig: "DVGlzwvCE85", imgs: i("a107", 2), short: "Екошкіра · металеві ніжки", desc: "Стілець-крісло з екошкіри на металевих ніжках.", specs: [["Оббивка", "Екошкіра"]] },
+  { slug: "stilets-vanessa-2", name: "Стілець «Ванесса-2»", cat: "stiltsi", ig: "DTvfvI8iHil", imgs: i("vanessa2", 2), short: "Срібні меблеві цвяшки", desc: "«Ванесса-2» — м'яка спинка, приємна тканина, акуратні ніжки й декоративні срібні меблеві цвяшки.", specs: [["Ніжки", "Білі"]], fabric: true },
+  { slug: "stilets-ghc-22314", name: "Стілець GHC-22314", cat: "stiltsi", tag: "Новинка", ig: "DYHOibEoROv", imgs: ["/img/p/ghc22314-1.webp"], short: "Поворотний · колекція 2026", desc: "Стілець з нової колекції 2026 на поворотній металевій основі. В наявності.", specs: [["Наявність", "В наявності"]] },
+  { slug: "stilets-ghc-4526", name: "Стілець GHC-4526", cat: "stiltsi", ig: "DYHOibEoROv", imgs: ["/img/p/ghc4526-1.webp"], short: "Колекція 2026", desc: "Стілець з нової колекції 2026 зі спинкою-мушлею. В наявності.", specs: [["Наявність", "В наявності"]] },
+  { slug: "stilets-ghc-2020", name: "Стілець GHC-2020", cat: "stiltsi", ig: "DYHOibEoROv", imgs: ["/img/p/ghc2020-1.webp"], short: "Колекція 2026", desc: "М'який стілець з нової колекції 2026 зі стьобаною спинкою. В наявності.", specs: [["Наявність", "В наявності"]] },
+  { slug: "stilets-klasychnyi-ovalnyi", name: "Стілець класичний з овальною спинкою", cat: "stiltsi", ig: "DL2WQProq2H", imgs: i("oval-chair", 2), short: "Темний дерев'яний каркас", desc: "Класичний стілець з витонченим дерев'яним каркасом темного кольору та овальною спинкою з текстильним оздобленням.", specs: [["Каркас", "Дерево, темне"]], fabric: true },
+  { slug: "taburet-derevo", name: "Табурет на дерев'яних ніжках", cat: "stiltsi", ig: "DL1y1ezI2jI", imgs: i("stool2", 2), short: "Колір і розмір на вибір", desc: "Легкий компактний табурет з м'яким сидінням та натуральними дерев'яними ніжками.", specs: [["Ніжки", "Дерево"]], fabric: true },
+
+  { slug: "stil-malibu", name: "Стіл «Малібу»", cat: "stoly", ig: "DTh89MmCGag", imgs: i("malibu", 3), short: "HPL · 140 + 40 × 80 см", desc: "Стіл «Малібу»: стільниця з міцного HPL, стійка до подряпин і вологи, нога з натурального дерева.", specs: [["Розмір", "140 см + вставка 40 см"], ["Ширина", "80 см"], ["Колір", "RAL 9001"]] },
+  { slug: "stil-feniks", name: "Стіл «Фенікс»", cat: "stoly", tag: "Новинка", ig: "DWjzCGxiL3-", imgs: i("phoenix", 2), short: "Ø120 см · фрезерована ніжка", desc: "Стильний стіл «Фенікс» Ø120 см на масивній ніжці з фрезеруванням.", specs: [["Діаметр", "120 см"]] },
+  { slug: "stil-polo", name: "Стіл «Polo»", cat: "stoly", ig: "DL4RAt0oOSx", imgs: ["/img/p/polo-1.webp"], short: "160 × 90 см, +30 см", desc: "Стіл Polo — баланс стилю та функціональності. Розмір 160×90 см, легко розсувається ще на 30 см.", specs: [["Розмір", "160 × 90 см"], ["Розкладання", "+30 см"], ["Висота", "75 см"]] },
+  { slug: "stil-priamokutnyi", name: "Стіл прямокутний", cat: "stoly", ig: "DL4qPrpItKt", imgs: i("rect", 2), short: "Масивні чорні ніжки", desc: "Класичний прямокутний стіл: стільниця світло-коричневого відтінку та чотири масивні чорні ніжки.", specs: [["Ніжки", "Чорні"]] },
+  { slug: "stil-barcelona", name: "Стіл «Barcelona»", cat: "stoly", ig: "DX_f0BZIJMW", imgs: i("barcelona", 2), short: "Класика · розкладний", desc: "Розкладний обідній стіл у класичному стилі з витонченими формами.", specs: [["Розкладання", "Так"]] },
+  { slug: "stil-ght-202", name: "Стіл GHT-202", cat: "stoly", ig: "DYHOibEoROv", imgs: ["/img/p/ght202-1.webp"], short: "Колекція 2026", desc: "Стіл з нової колекції 2026. В наявності.", specs: [["Наявність", "В наявності"]] },
+  { slug: "stil-ght-203", name: "Стіл GHT-203 / 204", cat: "stoly", ig: "DYHOibEoROv", imgs: ["/img/p/ght203-1.webp"], short: "Колекція 2026", desc: "Стіл з нової колекції 2026. В наявності.", specs: [["Наявність", "В наявності"]] },
+
+  { slug: "lizhko-shell", name: "Ліжко «Shell»", cat: "lizhka", tag: "Новинка", ig: "DUYwb8OCJ07", imgs: i("shell", 3), short: "Підйомний механізм · матрац", desc: "Ліжко «Shell» з підйомним механізмом, нішою для білизни та матрацом власного виробництва.", specs: [["Підйомний механізм", "Так"], ["Ніша для білизни", "Так"]], sizes: [{ label: "140 × 200" }, { label: "160 × 200" }, { label: "180 × 200" }], fabric: true },
+  { slug: "lizhko-relaxo", name: "Ліжко «Relaxo»", cat: "lizhka", ig: "DWCURGiiOc2", imgs: i("relaxo", 2), short: "UNITEX Lama 1", desc: "Ліжко «Relaxo» — м'який затишок і стиль у кожній деталі. Виконане в тканині LAMA 1 від UNITEX.", specs: [["Тканина на фото", "UNITEX Lama 1"]], sizes: [{ label: "140 × 200" }, { label: "160 × 200" }, { label: "180 × 200" }], fabric: true },
+  { slug: "lizhko-riviera", name: "Ліжко «Riviera»", cat: "lizhka", ig: "DX_rrY1IhDb", imgs: i("riviera", 2), short: "Геометрична прошивка", desc: "М'яке, об'ємне ліжко з трендовою геометричною прошивкою.", specs: [["Основа", "Ламелі"]], sizes: [{ label: "140 × 200" }, { label: "160 × 200" }, { label: "180 × 200" }], fabric: true },
+  { slug: "lizhko-soft-line", name: "Ліжко «Soft Line»", cat: "lizhka", ig: "DWmVLMTiN4y", imgs: i("softline", 2), short: "М'які захисні бортики", desc: "Ліжко Soft Line — сучасний комфорт і стиль: м'які захисні бортики.", specs: [["Бортики", "М'які"]], sizes: [{ label: "140 × 200" }, { label: "160 × 200" }, { label: "180 × 200" }], fabric: true },
+  { slug: "dytiache-lizhko-plise", name: "Дитяче ліжко «Плісе»", cat: "lizhka", ig: "DV_L-05CHld", imgs: i("plisse", 2), short: "Драпірування плісе", desc: "Дитяче ліжечко з м'якими бортиками в техніці плісе.", specs: [["Для кого", "Дитяче"]], fabric: true },
+  { slug: "dytiache-lizhko-oliviia", name: "Дитяче ліжко «Олівія»", cat: "lizhka", ig: "DU3uG-CiHFb", imgs: i("olivia-kids", 2), short: "Спинка-пелюстки", desc: "Дитяче ліжко «Олівія» — ніжний дизайн із м'якою спинкою у формі пелюсток. Зручне, безпечне та стильне.", specs: [["Для кого", "Дитяче"]], fabric: true },
 ];
 
 export const bySlug = (slug: string) => products.find((p) => p.slug === slug);
 export const byCat = (cat: CatId) => products.filter((p) => p.cat === cat);
 export const catOf = (id: CatId) => categories.find((c) => c.id === id)!;
+
+export const unitPrice = (p: Product, size?: string) => p.sizes?.find((s) => s.label === size)?.price ?? p.price;
+export const priceText = (n?: number) => (n ? uah(n) : "Ціна за запитом");
 
 export const uah = (n: number) => `${n.toLocaleString("uk-UA").replace(/ | /g, " ")} ₴`;
 

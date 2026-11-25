@@ -1,10 +1,10 @@
 import type { Metadata } from "next";
 import { Icon } from "@/components/Icons";
-import { site, stores } from "@/lib/site";
+import { site, stores, telHref } from "@/lib/site";
 
 export const metadata: Metadata = {
   title: "Магазини",
-  description: "Магазини OLBERG в Івано-Франківську, Косові та Смодні. Доставка по всій Україні.",
+  description: "Магазини OLBERG в Івано-Франківську, Косові та Смодні. Доставка по всій Україні, окрім окупованих територій.",
 };
 
 export default function StoresPage() {
@@ -13,7 +13,7 @@ export default function StoresPage() {
       <header className="wrap page-head" data-reveal>
         <p className="eyebrow">Магазини</p>
         <h1 className="h1">Де купити OLBERG</h1>
-        <p className="lead">Чотири магазини на Прикарпатті. Якщо ви з іншого міста — оформіть замовлення на сайті, і ми відправимо його службою доставки.</p>
+        <p className="lead">Чотири магазини на Прикарпатті. Якщо ви з іншого міста — оформіть замовлення на сайті, і ми відправимо його службою доставки (окрім окупованих територій).</p>
       </header>
       <div className="wrap stores-grid">
         {stores.map((s, k) => (
@@ -28,6 +28,16 @@ export default function StoresPage() {
                 <Icon name="pin" size={18} /> {s.address}
               </p>
               <p className="muted">{s.note}</p>
+              {(s.phones || s.email) && (
+                <p className="store-contacts">
+                  {s.phones?.map((t) => (
+                    <a key={t} href={telHref(t)}>
+                      {t}
+                    </a>
+                  ))}
+                  {s.email && <a href={`mailto:${s.email}`}>{s.email}</a>}
+                </p>
+              )}
               <a href={s.map} target="_blank" rel="noopener noreferrer" className="btn">
                 Прокласти маршрут
               </a>
@@ -41,8 +51,13 @@ export default function StoresPage() {
           <p>Підберемо модель, тканину й розмір, надішлемо фото зразків.</p>
         </div>
         <div className="callout-cta">
-          <a href={site.phoneHref} className="btn btn-dark">
-            {site.phone}
+          {site.phones.map((t) => (
+            <a key={t.tel} href={telHref(t.tel)} className="btn btn-dark">
+              {t.tel}
+            </a>
+          ))}
+          <a href={`mailto:${site.email}`} className="btn">
+            {site.email}
           </a>
           <a href={site.direct} className="btn" target="_blank" rel="noopener noreferrer">
             Написати в Direct

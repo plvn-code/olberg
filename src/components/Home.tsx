@@ -2,8 +2,8 @@
 
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
-import { type Product, bySlug, categories, products, uah } from "@/lib/catalog";
-import { fabrics, swatches } from "@/lib/site";
+import { type Product, bySlug, categories, priceText, products } from "@/lib/catalog";
+import { site, swatches } from "@/lib/site";
 import { Icon } from "./Icons";
 import { Card } from "./Product";
 import { useStore } from "./Store";
@@ -42,8 +42,8 @@ export function Hero() {
           <span className="hero-cap">Крісло «Мушля»</span>
         </Link>
         <Link href="/product/stil-dub-ryflenyi" className="hero-p hero-p2">
-          <video ref={vid} src="/video/oak-table.mp4" poster="/video/oak-table.webp" muted loop playsInline preload="metadata" aria-label="Стіл «Фенікс» з масиву" />
-          <span className="hero-cap">Стіл «Фенікс»</span>
+          <video ref={vid} src="/video/oak-table.mp4" poster="/video/oak-table.webp" muted loop playsInline preload="metadata" aria-label="Круглий стіл з масиву" />
+          <span className="hero-cap">Круглий стіл з масиву</span>
         </Link>
         <Link href="/product/krislo-hirchychne" className="hero-p hero-p3" data-parallax="-0.06">
           <img src="/img/p/ed-mustard.webp" alt="Крісло «Мілано» в гірчичному оксамиті" width={720} height={1280} />
@@ -92,7 +92,8 @@ export function Feature({ p, flip, eyebrow, points, img, bg = "cream" }: { p: Pr
           ))}
         </ul>
         <p className="feature-price">
-          від <b>{uah(p.price)}</b>
+          {p.price ? "від " : ""}
+          <b>{priceText(p.price)}</b>
         </p>
         <div className="feature-cta">
           <button className="btn btn-dark" onClick={() => add({ slug: p.slug })}>
@@ -130,43 +131,39 @@ export function Tabs({ groups }: { groups: { label: string; slugs: string[] }[] 
   );
 }
 
-/** Fabric & colour block: pick a colour → the big swatch and caption change. */
+/** Fabric & colour block: the client will choose which fabrics to list — for now a general statement + colour swatches. */
 export function Fabrics() {
   const [c, setC] = useState(4);
-  const [f, setF] = useState(0);
   const sw = swatches[c];
   return (
     <section className="feature flip bg-linen fabrics" id="tkanyny">
       <div className="feature-media fabrics-media">
-        <img src="/img/p/ed-boucle.webp" alt="Фактура тканини букле" width={720} height={900} loading="lazy" data-reveal="zoom" />
+        <img src="/img/p/ed-boucle.webp" alt="Фактура меблевої тканини" width={720} height={900} loading="lazy" data-reveal="zoom" />
         <div className="fabrics-chip" style={{ "--c": sw.hex } as React.CSSProperties}>
           <i />
           <span>
-            {fabrics[f].name}
+            Колір
             <b>{sw.name}</b>
           </span>
         </div>
       </div>
       <div className="feature-text" data-reveal>
-        <p className="eyebrow">Тканина й колір</p>
-        <h2 className="h2">Будь-яка модель — у вашому кольорі</h2>
-        <p>Більшість диванів, крісел, стільців і пуфів ми шиємо під замовлення. Оберіть тканину та відтінок — менеджер надішле фото зразків і точну вартість.</p>
-        <div className="fabrics-list">
-          {fabrics.map((x, k) => (
-            <button key={x.id} className={`fabric ${k === f ? "on" : ""}`} onClick={() => setF(k)} aria-pressed={k === f}>
-              <b>{x.name}</b>
-              <span>{x.note}</span>
-            </button>
-          ))}
-        </div>
+        <p className="eyebrow">Тканини та кольори</p>
+        <h2 className="h2">Широкий асортимент тканин та кольорів на ваш вибір</h2>
+        <p>Більшість диванів, крісел, стільців, ліжок і пуфів шиємо під замовлення. Напишіть побажання до тканини й кольору — менеджер надішле фото зразків і точну вартість.</p>
         <div className="swatches swatches-lg">
           {swatches.map((s, k) => (
             <button key={s.id} className={`sw ${k === c ? "on" : ""}`} style={{ "--c": s.hex } as React.CSSProperties} onClick={() => setC(k)} aria-label={s.name} aria-pressed={k === c} title={s.name} />
           ))}
         </div>
-        <Link href="/catalog/dyvany" className="btn btn-dark">
-          Обрати модель
-        </Link>
+        <div className="feature-cta">
+          <Link href="/catalog/dyvany" className="btn btn-dark">
+            Обрати модель
+          </Link>
+          <a href={`mailto:${site.email}?subject=${encodeURIComponent("Зразки тканин")}`} className="btn">
+            Запитати зразки
+          </a>
+        </div>
       </div>
     </section>
   );

@@ -23,16 +23,17 @@ export function Catalog({ items, cat }: { items: Product[]; cat?: CatId }) {
     if (s && sorts.some((x) => x.id === s)) setSort(s as SortId);
   }, []);
 
-  const top = useMemo(() => Math.max(...items.map((p) => p.price)), [items]);
+  const top = useMemo(() => Math.max(0, ...items.map((p) => p.price || 0)), [items]);
   const steps = useMemo(() => {
-    const b = [2000, 5000, 10000, 20000, 30000].filter((v) => v < top && items.some((p) => p.price <= v));
+    const b = [2000, 5000, 10000, 20000, 30000].filter((v) => v < top && items.some((p) => !!p.price && p.price <= v));
     return b.slice(-3);
   }, [items, top]);
 
   const list = useMemo(() => {
-    const l = items.filter((p) => max === null || p.price <= max);
-    if (sort === "asc") return [...l].sort((a, b) => a.price - b.price);
-    if (sort === "desc") return [...l].sort((a, b) => b.price - a.price);
+    const l = items.filter((p) => max === null || (!!p.price && p.price <= max));
+    const pr = (p: Product) => p.price ?? Infinity;
+    if (sort === "asc") return [...l].sort((a, b) => pr(a) - pr(b));
+    if (sort === "desc") return [...l].sort((a, b) => (b.price ?? -1) - (a.price ?? -1));
     if (sort === "new") return [...l].sort((a, b) => Number(b.tag === "Новинка") - Number(a.tag === "Новинка"));
     return [...l].sort((a, b) => rank(a) - rank(b));
   }, [items, sort, max]);

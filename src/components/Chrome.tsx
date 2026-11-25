@@ -3,12 +3,12 @@
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useMemo, useRef, useState } from "react";
-import { bySlug, categories, catOf, products, uah } from "@/lib/catalog";
-import { fabrics, site, swatches } from "@/lib/site";
+import { bySlug, categories, catOf, priceText, products, unitPrice, uah } from "@/lib/catalog";
+import { site, telHref } from "@/lib/site";
 import { Icon } from "./Icons";
 import { useStore } from "./Store";
 
-const bar = ["Доставка по всій Україні", `Власне виробництво з ${site.since} року`, "Шиємо в тканині та кольорі на ваш вибір"];
+const bar = [site.delivery, `Власне виробництво з ${site.since} року`, "Широкий асортимент тканин та кольорів на ваш вибір"];
 
 export function Logo({ className = "" }: { className?: string }) {
   return (
@@ -73,9 +73,13 @@ export function Header() {
               </span>
             ))}
           </p>
-          <a className="topbar-r" href={site.phoneHref}>
-            <Icon name="phone" size={14} /> {site.phone}
-          </a>
+          <span className="topbar-r">
+            {site.phones.slice(0, 2).map((p) => (
+              <a key={p.tel} href={telHref(p.tel)}>
+                {p.tel}
+              </a>
+            ))}
+          </span>
         </div>
       </div>
       <header className={`hdr ${hidden && !menu ? "is-hidden" : ""} ${scrolled ? "is-scrolled" : ""}`}>
@@ -133,9 +137,16 @@ export function Header() {
             <Link href="/delivery" tabIndex={menu ? 0 : -1}>Доставка та оплата</Link>
             <Link href="/about" tabIndex={menu ? 0 : -1}>Про нас</Link>
           </div>
-          <a className="mnav-phone" href={site.phoneHref} tabIndex={menu ? 0 : -1}>
-            {site.phone}
-          </a>
+          <div className="mnav-phones">
+            {site.phones.map((p) => (
+              <a key={p.tel} href={telHref(p.tel)} tabIndex={menu ? 0 : -1}>
+                {p.tel} <small>{p.note}</small>
+              </a>
+            ))}
+            <a href={`mailto:${site.email}`} tabIndex={menu ? 0 : -1}>
+              {site.email}
+            </a>
+          </div>
         </div>
       </div>
     </>
@@ -143,7 +154,7 @@ export function Header() {
 }
 
 export function CartDrawer() {
-  const { lines, total, drawer, setDrawer, setQty, remove, lastAdded } = useStore();
+  const { lines, total, onRequest, drawer, setDrawer, setQty, remove, lastAdded } = useStore();
   const path = usePathname();
   useEffect(() => setDrawer(false), [path, setDrawer]);
   useEffect(() => {
@@ -184,10 +195,10 @@ export function CartDrawer() {
                       <Link href={`/product/${p.slug}`} className="drawer-name">
                         {p.name}
                       </Link>
-                      {(l.fabric || l.color) && <p className="muted">{[l.fabric, l.color].filter(Boolean).join(" · ")}</p>}
+                      {(l.size || l.fabric) && <p className="muted">{[l.size, l.fabric && `Тканина: ${l.fabric}`].filter(Boolean).join(" · ")}</p>}
                       <div className="drawer-row">
                         <Qty value={l.qty} onChange={(q) => setQty(l.key, q)} small />
-                        <b>{uah(p.price * l.qty)}</b>
+                        <b>{priceText((unitPrice(p, l.size) || 0) * l.qty)}</b>
                       </div>
                       <button className="link-btn" onClick={() => remove(l.key)}>
                         Видалити
@@ -200,9 +211,11 @@ export function CartDrawer() {
             <div className="drawer-foot">
               <div className="drawer-total">
                 <span>Разом</span>
-                <b>{uah(total)}</b>
+                <b>{total ? uah(total) : "—"}</b>
               </div>
-              <p className="muted small">Вартість доставки розраховується за тарифами перевізника.</p>
+              <p className="muted small">
+                {onRequest ? "Ціну позицій «за запитом» менеджер назве після підтвердження. " : ""}Вартість доставки — за тарифами перевізника.
+              </p>
               <Link href="/checkout" className="btn btn-dark btn-block">
                 Оформити замовлення
               </Link>
@@ -294,7 +307,7 @@ export function Search() {
                       <b>{p.name}</b>
                       <small>{catOf(p.cat).one}</small>
                     </span>
-                    <em>{uah(p.price)}</em>
+                    <em>{priceText(p.price)}</em>
                   </Link>
                 </li>
               ))}
@@ -308,49 +321,15 @@ export function Search() {
   );
 }
 
-export function FabricPicker({
-  fabric,
-  color,
-  onFabric,
-  onColor,
-}: {
-  fabric: string;
-  color: string;
-  onFabric: (s: string) => void;
-  onColor: (s: string) => void;
-}) {
+export function FabricWish({ value, onChange }: { value: string; onChange: (s: string) => void }) {
   return (
     <div className="picker">
-      <div className="picker-row">
-        <p className="picker-label">
-          Тканина: <b>{fabric}</b>
-        </p>
-        <div className="chips">
-          {fabrics.map((f) => (
-            <button key={f.id} className={`chip ${fabric === f.name ? "on" : ""}`} onClick={() => onFabric(f.name)} aria-pressed={fabric === f.name}>
-              {f.name}
-            </button>
-          ))}
-        </div>
-      </div>
-      <div className="picker-row">
-        <p className="picker-label">
-          Колір: <b>{color}</b>
-        </p>
-        <div className="swatches">
-          {swatches.map((s) => (
-            <button
-              key={s.id}
-              className={`sw ${color === s.name ? "on" : ""}`}
-              style={{ "--c": s.hex } as React.CSSProperties}
-              onClick={() => onColor(s.name)}
-              aria-label={s.name}
-              aria-pressed={color === s.name}
-              title={s.name}
-            />
-          ))}
-        </div>
-      </div>
+      <p className="picker-title">Широкий асортимент тканин та кольорів на ваш вибір</p>
+      <label className="picker-field">
+        <span>Побажання щодо тканини та кольору (необов&apos;язково)</span>
+        <input value={value} maxLength={120} onChange={(e) => onChange(e.target.value)} placeholder="Наприклад: світлий велюр, сірий, як на фото…" />
+      </label>
+      <p className="picker-note">Менеджер надішле фото зразків і підтвердить вартість у вибраній тканині.</p>
     </div>
   );
 }

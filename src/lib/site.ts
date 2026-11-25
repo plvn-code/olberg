@@ -3,18 +3,28 @@ export const site = {
   legal: "OLBERG · меблі від виробника",
   url: process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3012",
   description:
-    "OLBERG — меблі від виробника з 1994 року: дивани, крісла, стільці, столи, ліжка та пуфи. Тканина й колір на вибір, доставка по всій Україні, магазини в Івано-Франківську та Косові.",
+    "OLBERG — меблі від виробника з 1994 року: дивани, крісла, стільці, столи, ліжка та пуфи. Широкий асортимент тканин та кольорів, доставка по всій Україні (окрім окупованих територій), магазини в Івано-Франківську та Косові.",
   since: 1994,
   instagram: "https://www.instagram.com/mebli.olberg/",
   instagramHandle: "@mebli.olberg",
   tiktok: "https://www.tiktok.com/@olberg_mebli",
   direct: "https://ig.me/m/mebli.olberg",
-  // Телефон узгодити з клієнтом (див. docs/STATUS.md)
+  // Номери та пошту узгодити з клієнтом (див. docs/STATUS.md)
   phone: "+38 097 904 82 16",
   phoneHref: "tel:+380979048216",
+  phones: [
+    { tel: "+38 097 904 82 16", note: "Івано-Франківськ" },
+    { tel: "+38 095 014 22 82", note: "Івано-Франківськ" },
+    { tel: "+38 068 572 27 75", note: "Косів" },
+  ],
+  email: "olberg1@ukr.net",
+  delivery: "Доставка по всій Україні, окрім окупованих територій",
 };
 
-export type Store = { city: string; title: string; address: string; note: string; map: string; img: string };
+export const telHref = (t: string) => `tel:${t.replace(/[^\d+]/g, "")}`;
+export const mailHref = (subject?: string) => `mailto:${site.email}${subject ? `?subject=${encodeURIComponent(subject)}` : ""}`;
+
+export type Store = { city: string; title: string; address: string; note: string; map: string; img: string; phones?: string[]; email?: string };
 
 const map = (q: string) => `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(q)}`;
 
@@ -25,6 +35,8 @@ export const stores: Store[] = [
     address: "вул. Василя Стуса, 28",
     note: "Дивани, крісла, стільці, столи",
     map: map("Івано-Франківськ, вул. Василя Стуса, 28"),
+    phones: ["+38 097 904 82 16", "+38 095 014 22 82"],
+    email: "olbergmebli_if@ukr.net",
     img: "/img/p/ed-showroom.webp",
   },
   {
@@ -41,6 +53,8 @@ export const stores: Store[] = [
     address: "вул. Незалежності, 26",
     note: "Повний асортимент і зразки тканин",
     map: map("Косів, вул. Незалежності, 26"),
+    phones: ["+38 068 572 27 75"],
+    email: "olberg4@ukr.net",
     img: "/img/p/ed-store.webp",
   },
   {
@@ -53,17 +67,8 @@ export const stores: Store[] = [
   },
 ];
 
-export type Fabric = { id: string; name: string; note: string };
 export type Swatch = { id: string; name: string; hex: string };
 
-export const fabrics: Fabric[] = [
-  { id: "velour", name: "Велюр антикіготь", note: "Стійкий до кігтів і затяжок, легко чиститься" },
-  { id: "boucle", name: "Букле", note: "Об'ємна фактура, м'який на дотик" },
-  { id: "velvet", name: "Оксамит", note: "Глибокий колір і м'який блиск" },
-  { id: "rock", name: "UNITEX Rock", note: "Щільна рогожка для щоденного використання" },
-  { id: "lama", name: "UNITEX Lama", note: "Тепла ворсиста тканина з ефектом вовни" },
-  { id: "leather", name: "Екошкіра", note: "Практична, не боїться вологи" },
-];
 
 export const swatches: Swatch[] = [
   { id: "milk", name: "Молочний", hex: "#ebe4d6" },
@@ -79,7 +84,7 @@ export const swatches: Swatch[] = [
 
 export const usp = [
   { t: "Власне виробництво", d: `Каркаси, оббивка й матраци — на нашій фабриці з ${site.since} року` },
-  { t: "Тканина й колір на вибір", d: "Шиємо модель у потрібному кольорі та розмірі" },
-  { t: "Доставка по Україні", d: "Відправляємо службами доставки в будь-яке місто" },
+  { t: "Тканини та кольори на вибір", d: "Широкий асортимент тканин та кольорів на ваш вибір" },
+  { t: "Доставка по Україні", d: "У відділення або за адресою, окрім окупованих територій" },
   { t: "4 магазини", d: "Івано-Франківськ, Косів і Смодна" },
 ];

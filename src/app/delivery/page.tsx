@@ -1,17 +1,16 @@
 import type { Metadata } from "next";
-import Link from "next/link";
-import { fabrics, site, swatches } from "@/lib/site";
+import { site, swatches, telHref } from "@/lib/site";
 
 export const metadata: Metadata = {
   title: "Доставка та оплата",
-  description: "Доставка меблів OLBERG по всій Україні, самовивіз з магазинів, оплата та виготовлення під замовлення.",
+  description: "Доставка меблів OLBERG по всій Україні (окрім окупованих територій), самовивіз з магазинів, оплата та виготовлення під замовлення.",
 };
 
 const steps = [
   { t: "Замовлення", d: "Оформіть замовлення на сайті, телефоном або в Direct." },
   { t: "Підтвердження", d: "Менеджер узгоджує тканину, колір, розмір і надсилає фото зразків." },
   { t: "Виготовлення", d: "Моделі в наявності відправляємо одразу, під замовлення — після виготовлення." },
-  { t: "Доставка", d: "Відправляємо службою доставки в будь-яке місто або видаємо в магазині." },
+  { t: "Доставка", d: "Відправляємо службою доставки у відділення або за адресою (окрім окупованих територій) чи видаємо в магазині." },
 ];
 
 export default function DeliveryPage() {
@@ -34,7 +33,7 @@ export default function DeliveryPage() {
         <div data-reveal>
           <h2 className="h3">Доставка</h2>
           <ul className="dash">
-            <li>По всій Україні — службами доставки (у відділення або адресно).</li>
+            <li>По всій Україні, окрім окупованих територій, — службами доставки у відділення або за адресою.</li>
             <li>Самовивіз — з магазинів в Івано-Франківську, Косові та Смодні.</li>
             <li>Вартість доставки — за тарифами перевізника, розраховується під час підтвердження.</li>
           </ul>
@@ -50,14 +49,7 @@ export default function DeliveryPage() {
       </section>
       <section className="wrap fabrics-page" id="tkanyny" data-reveal>
         <h2 className="h2">Тканини та кольори</h2>
-        <div className="fabric-cards">
-          {fabrics.map((f) => (
-            <div key={f.id} className="fabric-card">
-              <b>{f.name}</b>
-              <span>{f.note}</span>
-            </div>
-          ))}
-        </div>
+        <p className="lead">Широкий асортимент тканин та кольорів на ваш вибір. Фото зразків надішлемо в месенджер або на пошту.</p>
         <div className="swatch-row">
           {swatches.map((s) => (
             <div key={s.id} className="swatch-big" style={{ "--c": s.hex } as React.CSSProperties}>
@@ -74,12 +66,14 @@ export default function DeliveryPage() {
           <p>Зателефонуйте або напишіть — відповімо щодо термінів, доставки та оплати.</p>
         </div>
         <div className="callout-cta">
-          <a href={site.phoneHref} className="btn btn-dark">
-            {site.phone}
+          {site.phones.map((t) => (
+            <a key={t.tel} href={telHref(t.tel)} className="btn btn-dark">
+              {t.tel}
+            </a>
+          ))}
+          <a href={`mailto:${site.email}`} className="btn">
+            {site.email}
           </a>
-          <Link href="/catalog" className="btn">
-            До каталогу
-          </Link>
         </div>
       </section>
     </div>

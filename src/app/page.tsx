@@ -2,7 +2,7 @@ import Link from "next/link";
 import { CatRail, Fabrics, Feature, Hero, Tabs, Usp } from "@/components/Home";
 import { Icon } from "@/components/Icons";
 import { Rail } from "@/components/Product";
-import { bySlug, pick, uah } from "@/lib/catalog";
+import { bySlug, pick, priceText } from "@/lib/catalog";
 import { site, stores, usp } from "@/lib/site";
 
 const classic = pick(["stilets-henuia", "stilets-franceska", "stilets-palermo", "stilets-vanessa"]);
@@ -32,6 +32,11 @@ export default function Home() {
         <Rail
           label="Новинки"
           items={pick([
+            "kutovyi-dyvan-milan",
+            "krislo-amanda",
+            "lizhko-shell",
+            "stilets-vertu",
+            "stil-feniks",
             "modulnyi-dyvan-modul",
             "krislo-kokon",
             "stil-keramika-marmur",
@@ -62,9 +67,10 @@ export default function Home() {
           </div>
           <Tabs
             groups={[
-              { label: "Дивани", slugs: ["kutovyi-dyvan-evelina", "dyvan-dublin", "dyvan-hrafit", "kutovyi-dyvan-indygo"] },
+              { label: "Дивани", slugs: ["kutovyi-dyvan-evelina", "dyvan-dublin", "dyvan-bonn", "kutovyi-dyvan-chicago"] },
+              { label: "Ліжка", slugs: ["lizhko-shell", "lizhko-relaxo", "lizhko-riviera", "lizhko-adele-new"] },
               { label: "Крісла", slugs: ["krislo-otto", "krislo-mushlia", "krislo-kokon", "krislo-z-vukhamy"] },
-              { label: "Столи", slugs: ["stil-suchava", "stil-dub-ryflenyi", "stil-nero", "stil-kruhlyi-rozkladnyi"] },
+              { label: "Столи", slugs: ["stil-suchava", "stil-feniks", "stil-malibu", "stil-nero"] },
               { label: "Пуфи", slugs: ["puf-transformer-5-v-1", "puf-kapitone", "puf-tamburo", "lavochka-lidiia"] },
             ]}
           />
@@ -80,11 +86,11 @@ export default function Home() {
             Дивитися столи
           </Link>
         </div>
-        <Link href="/product/stil-ovalnyi-ryflenyi" className="duo-img duo-img-1" aria-label="Стіл «Відень»">
-          <img src="/img/p/ed-dining.webp" alt="Стіл «Відень» з рифленою основою" width={1000} height={1778} loading="lazy" data-reveal="zoom" />
+        <Link href="/product/stil-ovalnyi-ryflenyi" className="duo-img duo-img-1" aria-label="Овальний стіл на рифленій основі">
+          <img src="/img/p/ed-dining.webp" alt="Овальний стіл на рифленій основі" width={1000} height={1778} loading="lazy" data-reveal="zoom" />
         </Link>
-        <Link href="/product/stil-dub-ryflenyi" className="duo-img duo-img-2" aria-label="Стіл «Фенікс»">
-          <img src="/img/p/oak-round-1.webp" alt="Стіл «Фенікс»" width={496} height={620} loading="lazy" data-reveal="zoom" style={{ "--d": "150ms" } as React.CSSProperties} />
+        <Link href="/product/stil-dub-ryflenyi" className="duo-img duo-img-2" aria-label="Круглий стіл з масиву">
+          <img src="/img/p/oak-round-1.webp" alt="Круглий стіл з масиву" width={496} height={620} loading="lazy" data-reveal="zoom" style={{ "--d": "150ms" } as React.CSSProperties} />
         </Link>
       </section>
 
@@ -103,7 +109,7 @@ export default function Home() {
                 </div>
                 <h3>{p.name.match(/«(.+)»/)?.[1]}</h3>
                 <p>
-                  {p.specs.find((s) => s[0] === "Висота")?.[1]} · {uah(p.price)}
+                  {p.specs.find((s) => s[0] === "Висота")?.[1]} · від {priceText(p.price)}
                 </p>
               </Link>
             ))}
@@ -130,7 +136,7 @@ export default function Home() {
           <div className="sec-head" data-reveal>
             <div>
               <h2 className="h2">Магазини OLBERG</h2>
-              <p className="lead">Івано-Франківськ, Косів і Смодна. Іншим містам відправляємо службами доставки.</p>
+              <p className="lead">Івано-Франківськ, Косів і Смодна. В інші міста відправляємо службами доставки — по всій Україні, окрім окупованих територій.</p>
             </div>
             <Link href="/stores" className="ulink">
               Усі адреси

@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { categories } from "@/lib/catalog";
-import { site, stores } from "@/lib/site";
+import { site, stores, telHref } from "@/lib/site";
 import { Icon } from "./Icons";
 
 export function Footer() {
@@ -45,14 +45,17 @@ export function Footer() {
                 {s.city}, {s.address}
               </a>
             ))}
-            <a href={site.phoneHref} className="ftr-phone">
-              {site.phone}
-            </a>
+            {site.phones.map((t) => (
+              <a key={t.tel} href={telHref(t.tel)} className="ftr-phone">
+                {t.tel} <small>{t.note}</small>
+              </a>
+            ))}
+            <a href={`mailto:${site.email}`}>{site.email}</a>
           </div>
         </div>
         <div className="ftr-bottom">
           <span>© {new Date().getFullYear()} OLBERG. Усі права захищені.</span>
-          <span>Ціни на сайті вказані в гривнях, «від» — за базову тканину.</span>
+          <span>Ціни «від» — орієнтовні, точну вартість уточнюйте за телефоном або поштою.</span>
         </div>
       </div>
     </footer>

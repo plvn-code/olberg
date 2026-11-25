@@ -1,14 +1,16 @@
 "use client";
 
 import { createContext, useCallback, useContext, useEffect, useMemo, useState } from "react";
-import { bySlug } from "@/lib/catalog";
+import { bySlug, unitPrice } from "@/lib/catalog";
 
-export type Line = { key: string; slug: string; qty: number; fabric?: string; color?: string };
+export type Line = { key: string; slug: string; qty: number; size?: string; fabric?: string };
 
 type Ctx = {
   lines: Line[];
   count: number;
   total: number;
+  /** some lines have no fixed price («за запитом») */
+  onRequest: boolean;
   add: (l: Omit<Line, "key" | "qty">, qty?: number) => void;
   setQty: (key: string, qty: number) => void;
   remove: (key: string) => void;
@@ -63,7 +65,7 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
   }, [drawer, search]);
 
   const add = useCallback<Ctx["add"]>((l, qty = 1) => {
-    const key = [l.slug, l.fabric || "", l.color || ""].join("|");
+    const key = [l.slug, l.size || "", (l.fabric || "").trim()].join("|");
     setLines((ls) => {
       const f = ls.find((x) => x.key === key);
       return f ? ls.map((x) => (x.key === key ? { ...x, qty: x.qty + qty } : x)) : [...ls, { ...l, key, qty }];
@@ -78,8 +80,9 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
 
   const value = useMemo<Ctx>(() => {
     const count = lines.reduce((s, l) => s + l.qty, 0);
-    const total = lines.reduce((s, l) => s + (bySlug(l.slug)?.price || 0) * l.qty, 0);
-    return { lines, count, total, add, setQty, remove, clear, wish, toggleWish, drawer, setDrawer, search, setSearch, lastAdded };
+    const total = lines.reduce((s, l) => s + (unitPrice(bySlug(l.slug)!, l.size) || 0) * l.qty, 0);
+    const onRequest = lines.some((l) => !unitPrice(bySlug(l.slug)!, l.size));
+    return { lines, count, total, onRequest, add, setQty, remove, clear, wish, toggleWish, drawer, setDrawer, search, setSearch, lastAdded };
   }, [lines, wish, drawer, search, lastAdded, add, setQty, remove, clear, toggleWish]);
 
   return <StoreCtx.Provider value={value}>{children}</StoreCtx.Provider>;

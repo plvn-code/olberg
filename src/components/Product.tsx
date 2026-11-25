@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
-import { type Product, catOf, uah } from "@/lib/catalog";
+import { type Product, catOf, priceText, uah } from "@/lib/catalog";
 import { Icon } from "./Icons";
 import { useStore } from "./Store";
 
@@ -28,9 +28,9 @@ export function Card({ p, eager }: { p: Product; eager?: boolean }) {
         <span className="card-cat">{p.name.includes("«") ? p.name.split("«")[0].trim() : catOf(p.cat).one}</span>
         <h3 className="card-name">{p.name.match(/«(.+)»/)?.[1] ?? p.name}</h3>
         <p className="card-short">{p.short}</p>
-        <p className="card-price">
-          {p.fabric && <small>від </small>}
-          {uah(p.price)}
+        <p className={`card-price ${p.price ? "" : "ask"}`}>
+          {p.price ? <small>від </small> : null}
+          {priceText(p.price)}
           {p.old && <s>{uah(p.old)}</s>}
         </p>
       </Link>
